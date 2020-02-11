@@ -16,6 +16,7 @@ import org.apache.shiro.web.servlet.SimpleCookie;
 import org.crazycake.shiro.RedisCacheManager;
 import org.crazycake.shiro.RedisManager;
 import org.crazycake.shiro.RedisSessionDAO;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +30,13 @@ import java.util.Map;
  */
 @Configuration
 public class ShiroConfig {
+
+    @Value("${spring.redis.host}")
+    private String redisHost;
+    @Value("${spring.redis.port}")
+    private String redisPort;
+    @Value("${spring.redis.password}")
+    private String redisPassword;
 
     @Bean
     public ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager) {
@@ -94,10 +102,13 @@ public class ShiroConfig {
         return credentialsMatcher;
     }
 
-    @Bean
+    /**
+     * 导致@Value无法初始化
+     */
+    /*@Bean
     public LifecycleBeanPostProcessor lifecycleBeanPostProcessor(){
         return new LifecycleBeanPostProcessor();
-    }
+    }*/
 
     /**
      * 开启Shiro的注解支持
@@ -127,9 +138,14 @@ public class ShiroConfig {
      *
      * @return
      */
-    @ConfigurationProperties(prefix = "redis.shiro")
+    //@ConfigurationProperties(prefix = "redis.shiro")
     public RedisManager redisManager() {
-        return new RedisManager();
+        RedisManager redisManager = new RedisManager();
+        redisManager.setHost(redisHost);
+        redisManager.setPort(Integer.valueOf(redisPort));
+        redisManager.setPassword(redisPassword);
+        //redisManager.setDatabase(redisDatabase);
+        return redisManager;
     }
 
     /**
