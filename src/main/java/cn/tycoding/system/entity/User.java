@@ -63,6 +63,7 @@ public class User implements Serializable {
     }
 
     public void setPassword(String password) {
-        this.password = password == null ? "" : password.trim();
+        //this.password = password == null ? "" : password.trim();
+        this.password = password;
     }
 }
